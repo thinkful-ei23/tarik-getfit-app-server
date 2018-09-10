@@ -1,0 +1,37 @@
+[
+  {
+    "_id": "111111111111111111111101",
+    "title": "Push Muscles Workout (Chest, Triceps, Shoulders)",
+    "description": "Basic upperbody workout. Complete 3 sets of each exercise. Superset related workouts at own discretion.",
+    "exercises": ["222222222222222222222201", "222222222222222222222205", "222222222222222222222207", "222222222222222222222208"],
+    "tags": ["333333333333333333333301", "333333333333333333333302", "333333333333333333333310"]
+  },
+  {
+    "_id": "111111111111111111111102",
+    "title": "Calisthenics 101",
+    "description": "Test your endurance, core, and strength with this high intesity calisthenic workout. Superset entire routine for 3 sets. Time yourself.",
+    "exercises": ["222222222222222222222201", "222222222222222222222202", "222222222222222222222203", "222222222222222222222208", "222222222222222222222206"],
+    "tags": ["333333333333333333333306", "333333333333333333333301", "333333333333333333333302", "333333333333333333333303"]
+  },
+  {
+    "_id": "111111111111111111111103",
+    "title": "Pull Muscles Workout (Back, biceps)",
+    "description": "This workout will focus specifically on pull ups. 3 rounds. For each round, complete 3 sets of a pullup exercise (wide grip, bicep pullup, regular)",
+    "exercises": ["222222222222222222222202"],
+    "tags": ["333333333333333333333306", "333333333333333333333303", "333333333333333333333304"]
+  },
+  {
+    "_id": "111111111111111111111104",
+    "title": "Leg Day of Death",
+    "description": "You already know what we're here for. Straight supersets. Squats, lunges, and more squats.",
+    "exercises": ["222222222222222222222206", "222222222222222222222210"],
+    "tags": ["333333333333333333333305"]
+  },
+  {
+    "_id": "111111111111111111111105",
+    "title": "HIIT Cardio",
+    "description": "During this HIIT (High Intensity Interval Training) workout, you will break up your run into periods of jogging/running and walking. 2 minutes on, 1 minute off, for 30 minutes.",
+    "exercises": [],
+    "tags": ["333333333333333333333307", "333333333333333333333309"]
+  }
+]
