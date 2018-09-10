@@ -15,7 +15,7 @@ Router.get('/', (req, res, next) => {
   const { tagId } = req.query;
   
   if (searchTerm) {
-    filter.title = searchTerm;
+    filter.title = {$regex: searchTerm, $options: 'i'};
   }
   if (tagId) {
     filter.tags = tagId;
