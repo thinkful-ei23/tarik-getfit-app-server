@@ -54,6 +54,7 @@ function runServer(port = PORT) {
 }
 
 if (require.main === module) {
+  console.log(process.env);
   dbConnect();
   runServer();
 }
