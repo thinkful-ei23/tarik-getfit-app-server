@@ -24,6 +24,8 @@ app.use(
   })
 );
 
+//Body parser
+app.use(express.json());
 app.use('/api/routines', routinesRouter);
 
 app.use((req, res, next) => {
@@ -54,7 +56,6 @@ function runServer(port = PORT) {
 }
 
 if (require.main === module) {
-  console.log(process.env);
   dbConnect();
   runServer();
 }
