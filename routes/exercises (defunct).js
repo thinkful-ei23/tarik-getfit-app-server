@@ -23,12 +23,16 @@ Router.post('/', (req, res, next) => {
   if (typeof newExercise.sets !== 'number') {
     const err = new Error('`sets` is not a number');
     err.status = 400;
+    // err.reason = 'TypeError';
+    // err.location = 'sets';
     return next(err);
   }
 
   if (typeof newExercise.reps !== 'number') {
     const err = new Error('`reps` is not a number');
     err.status = 400;
+    // err.reason = 'TypeError';
+    // err.location = 'reps';
     return next(err);
   }
 

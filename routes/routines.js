@@ -56,7 +56,6 @@ Router.get('/:id', (req, res, next) => {
 
 //=====POST/Create a new routine=====
 Router.post('/', (req, res, next) => {
-  console.log(req.body); 
   const newRoutine = {
     title: req.body.title,
     description: req.body.description,
@@ -86,31 +85,54 @@ Router.post('/', (req, res, next) => {
     }
 
     newRoutine.exercises.forEach(exercise => {
-      if (!mongoose.Types.ObjectId.isValid(exercise)) {
-        const err = new Error('The `exercise` array contains an invalid `id`');
+      if (typeof exercise !== 'object') {
+        const err = new Error('The `exercise` array must consist of objects');
+        err.status = 400;
+        return next(err);
+      }
+
+      if (!exercise.name) {
+        const err = new Error('Missing `name` for object in `exercise` array');
+        err.status = 400;
+        return next(err);
+      }
+
+      if (typeof exercise.sets !== 'number') {
+        const err = new Error('`sets` is not a number for object in `exercise` array');
+        err.status = 400;
+        return next(err);
+      }
+
+      if (typeof exercise.reps !== 'number') {
+        const err = new Error('`reps` is not a number for object in `exercise` array');
         err.status = 400;
         return next(err);
       }
     });
   }
 
-  if (newRoutine.tags) {
-    if (!Array.isArray(newRoutine.tags)) {
-      const err = new Error('`tags` is not an array');
-      err.status = 400;
-      return next(err);
-    }
+  // if (newRoutine.tags) {
+  //   if (!Array.isArray(newRoutine.tags)) {
+  //     const err = new Error('`tags` is not an array');
+  //     err.status = 400;
+  //     return next(err);
+  //   }
 
-    newRoutine.tags.forEach(tag => {
-      if (!mongoose.Types.ObjectId.isValid(tag)) {
-        const err = new Error('The `tags` array contains an invalid `id`');
-        err.status = 400;
-        return next(err);
-      }
-    });
-  }
+  //   newRoutine.tags.forEach(tag => {
+  //     if (!mongoose.Types.ObjectId.isValid(tag)) {
+  //       const err = new Error('The `tags` array contains an invalid `id`');
+  //       err.status = 400;
+  //       return next(err);
+  //     }
+  //   });
+  // }
 
-  return Routine.create(newRoutine)
+  return Exercise.create(newRoutine.exercises)
+    .then(result => {
+      const res = result.map(exercise => exercise.id);
+      newRoutine.exercises = res;
+      return Routine.create(newRoutine);
+    })
     .then(result => {
       res.location(`${req.originalUrl}/${result.id}`).status(201).json(result);
     })
