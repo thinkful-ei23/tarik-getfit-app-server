@@ -3,12 +3,17 @@
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
+const passport = require('passport');
+const localStrategy = require('./passport/local');
+const jwtStrategy = require('./passport/jwt');
 
 const { PORT, CLIENT_ORIGIN } = require('./config');
 const { dbConnect } = require('./db-mongoose');
 // const {dbConnect} = require('./db-knex');
 
 const routinesRouter = require('./routes/routines');
+const usersRouter = require('./routes/users');
+const authRouter = require('./routes/auth');
 
 const app = express();
 
@@ -26,7 +31,13 @@ app.use(
 
 //Body parser
 app.use(express.json());
+
+passport.use(localStrategy);
+passport.use(jwtStrategy);
+
 app.use('/api/routines', routinesRouter);
+app.use('/api/users', usersRouter);
+app.use('/api', authRouter);
 
 app.use((req, res, next) => {
   const err = new Error('Not Found');

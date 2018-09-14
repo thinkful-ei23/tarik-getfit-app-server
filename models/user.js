@@ -1,7 +1,7 @@
 'use strict';
 
 const mongoose = require('mongoose');
-const bcrypt = require('bcrptjs');
+const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
   firstName: String,
@@ -23,7 +23,7 @@ userSchema.methods.validatePassword = function(password) {
   return bcrypt.compare(password, this.password);
 };
 
-userSchema.static.hashPassword = function(password) {
+userSchema.statics.hashPassword = function(password) {
   return bcrypt.hash(password, 10);
 };
 
