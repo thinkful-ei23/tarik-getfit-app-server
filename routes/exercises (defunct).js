@@ -15,7 +15,7 @@ Router.post('/', (req, res, next) => {
   };
 
   if (!newExercise.name) {
-    const err = new Error('Missing `title` in request body');
+    const err = new Error('Missing `name` in request body');
     err.status = 400;
     return next(err);
   }

@@ -134,6 +134,10 @@ Router.post('/', (req, res, next) => {
       return Routine.create(newRoutine);
     })
     .then(result => {
+      const {id} = result;
+      return Routine.findById(id).populate('exercises', 'name sets reps');
+    })
+    .then(result => {
       res.location(`${req.originalUrl}/${result.id}`).status(201).json(result);
     })
     .catch(err => {

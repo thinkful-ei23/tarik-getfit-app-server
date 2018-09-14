@@ -9,7 +9,6 @@ const { dbConnect } = require('./db-mongoose');
 // const {dbConnect} = require('./db-knex');
 
 const routinesRouter = require('./routes/routines');
-const exercisesRouter = require('./routes/exercises');
 
 const app = express();
 
@@ -28,7 +27,6 @@ app.use(
 //Body parser
 app.use(express.json());
 app.use('/api/routines', routinesRouter);
-app.use('/api/exercises', exercisesRouter);
 
 app.use((req, res, next) => {
   const err = new Error('Not Found');
