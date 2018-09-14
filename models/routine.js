@@ -6,7 +6,8 @@ const routineSchema = new mongoose.Schema({
   title: {type: String, required: true},
   description: String,
   exercises: [{type: mongoose.Schema.Types.ObjectId, ref: 'Exercise'}],
-  tags: [{type: mongoose.Schema.Types.ObjectId, ref: 'Tag'}]
+  tags: [{type: mongoose.Schema.Types.ObjectId, ref: 'Tag'}],
+  userId: {type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true}
 });
 
 routineSchema.set('timestamps', true);
