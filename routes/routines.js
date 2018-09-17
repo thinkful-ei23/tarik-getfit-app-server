@@ -14,7 +14,9 @@ Router.get('/', (req, res, next) => {
   let filter = {};
   const { searchTerm } = req.query;
   const { tagId } = req.query;
-  // const userId = req.user.id;
+  const userId = req.user.id;
+
+  filter = { userId };
   
   if (searchTerm) {
     filter.title = {$regex: searchTerm, $options: 'i'};
@@ -42,7 +44,11 @@ Router.get('/', (req, res, next) => {
 //============GET by ID=================
 Router.get('/:id', (req, res, next) => {
   const { id } = req.params;
-  return Routine.findOne({_id: id})
+  const userId = req.user.id;
+
+  return Routine.findOne({_id: id, userId})
+    .populate('exercises', 'name sets reps')
+    .populate('tags', 'name')
     .then(routine => {
       if (routine) {
         res.json(routine);
@@ -57,11 +63,14 @@ Router.get('/:id', (req, res, next) => {
 
 //=====POST/Create a new routine=====
 Router.post('/', (req, res, next) => {
+  const userId = req.user.id;
+
   const newRoutine = {
     title: req.body.title,
     description: req.body.description,
     exercises: req.body.exercises,
-    tags: req.body.tags
+    tags: req.body.tags,
+    userId
   };
 
   if (!newRoutine.title) {
@@ -109,6 +118,12 @@ Router.post('/', (req, res, next) => {
         err.status = 400;
         return next(err);
       }
+
+      if (exercise.userId !== req.user.id) {
+        const err = new Error('This `exercise` does not belong to the user');
+        err.status = 400;
+        return next(err);
+      }
     });
   }
 
@@ -136,7 +151,7 @@ Router.post('/', (req, res, next) => {
     })
     .then(result => {
       const {id} = result;
-      return Routine.findById(id).populate('exercises', 'name sets reps');
+      return Routine.findById(id).populate('exercises', 'name sets reps').populate('tags', 'name');
     })
     .then(result => {
       res.location(`${req.originalUrl}/${result.id}`).status(201).json(result);
