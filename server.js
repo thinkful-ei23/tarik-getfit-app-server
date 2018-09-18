@@ -37,7 +37,7 @@ passport.use(jwtStrategy);
 
 app.use('/api/routines', routinesRouter);
 app.use('/api/users', usersRouter);
-app.use('/api', authRouter);
+app.use('/api/auth', authRouter);
 
 app.use((req, res, next) => {
   const err = new Error('Not Found');

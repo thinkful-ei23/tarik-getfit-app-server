@@ -12,6 +12,7 @@ Router.post('/', (req, res, next) => {
   if (missingField) {
     const err = new Error(`Missing '${missingField}' in request body`);
     err.status = 422;
+    err.reason = 'ValidationError';
     return next(err);
   }
 
@@ -20,6 +21,7 @@ Router.post('/', (req, res, next) => {
   if (nonStringField) {
     const err = new Error(`Incorrect field type; expected string for field the following field: '${nonStringField}' `);
     err.status = 422;
+    err.reason = 'ValidationError';
     return next(err);
   }
 
@@ -28,6 +30,7 @@ Router.post('/', (req, res, next) => {
   if (nonTrimmedFields) {
     const err = new Error(`Cannot start or end with whitespace for the following field: '${nonTrimmedFields}'`);
     err.status = 422;
+    err.reason = 'ValidationError';
     return next(err);
   }
 
@@ -48,10 +51,12 @@ Router.post('/', (req, res, next) => {
     if (tooSmallField) {
       err = new Error(`${tooSmallField} must be at least ${sizeFields[tooSmallField].min} characters long`);
       err.status = 422;
+      err.reason = 'ValidationError';
       next(err);
     } else {
       err = new Error(`${tooLargeField} must be at most ${sizeFields[tooLargeField].max} characters long`);
       err.status = 422;
+      err.reason = 'ValidationError';
       next(err);
     }
   }
@@ -73,6 +78,7 @@ Router.post('/', (req, res, next) => {
       if (err.code === 11000) {
         err = new Error('The username already exists');
         err.status = 400;
+        err.reason = 'ValidationError';
       }
       next(err);
     });
