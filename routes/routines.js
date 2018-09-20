@@ -75,7 +75,6 @@ Router.post('/', (req, res, next) => {
     tags: req.body.tags,
     userId
   };
-  console.log(newRoutine.exercises);
 
   if (!newRoutine.title) {
     const err = new Error('Missing `title` in request body');
@@ -124,7 +123,6 @@ Router.post('/', (req, res, next) => {
       }
     });
   }
-  console.log(newRoutine.exercises);
   // if (newRoutine.tags) {
   //   if (!Array.isArray(newRoutine.tags)) {
   //     const err = new Error('`tags` is not an array');
@@ -142,7 +140,6 @@ Router.post('/', (req, res, next) => {
   // }
 
   if (newRoutine.exercises.length > 0) {
-    console.log(newRoutine.exercises);
     const mappedEx = newRoutine.exercises.map(exercise => {
       return Object.assign({}, exercise, {
         userId

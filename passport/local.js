@@ -7,6 +7,7 @@ const localStrategy = new LocalStrategy((username, password, done) => {
   User.findOne({ username })
     .then(result => {
       user = result;
+      console.log('THIS IS THE FLAG FOR LOCALSTRATEGY USER VALUE', user);
       if (!user) {
         return Promise.reject({
           reason: 'LoginError',
@@ -14,7 +15,11 @@ const localStrategy = new LocalStrategy((username, password, done) => {
           location: 'username'
         });
       }
+      console.log('THIS IS THE PASSWORD FROM USER (LOCALSTRAT)', password);
       const isValid = user.validatePassword(password);
+      return isValid;
+    })
+    .then((isValid) => {
       if (!isValid) {
         return Promise.reject({
           reason: 'LoginError',
