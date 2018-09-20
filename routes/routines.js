@@ -75,6 +75,7 @@ Router.post('/', (req, res, next) => {
     tags: req.body.tags,
     userId
   };
+  console.log(newRoutine.exercises);
 
   if (!newRoutine.title) {
     const err = new Error('Missing `title` in request body');
@@ -123,15 +124,7 @@ Router.post('/', (req, res, next) => {
       }
     });
   }
-
-  const mappedEx = newRoutine.exercises.map(exercise => {
-    return Object.assign({}, exercise, {
-      userId
-    });
-  });
-
-  newRoutine.exercises = mappedEx;
-
+  console.log(newRoutine.exercises);
   // if (newRoutine.tags) {
   //   if (!Array.isArray(newRoutine.tags)) {
   //     const err = new Error('`tags` is not an array');
@@ -148,22 +141,45 @@ Router.post('/', (req, res, next) => {
   //   });
   // }
 
-  return Exercise.create(newRoutine.exercises)
-    .then(result => {
-      const res = result.map(exercise => exercise.id);
-      newRoutine.exercises = res;
-      return Routine.create(newRoutine);
-    })
-    .then(result => {
-      const {id} = result;
-      return Routine.findById(id).populate('exercises', 'name sets reps userId').populate('tags', 'name');
-    })
-    .then(result => {
-      res.location(`${req.originalUrl}/${result.id}`).status(201).json(result);
-    })
-    .catch(err => {
-      next(err);
+  if (newRoutine.exercises.length > 0) {
+    console.log(newRoutine.exercises);
+    const mappedEx = newRoutine.exercises.map(exercise => {
+      return Object.assign({}, exercise, {
+        userId
+      });
     });
+  
+    newRoutine.exercises = mappedEx;
+
+    return Exercise.create(newRoutine.exercises)
+      .then(result => {
+        const res = result.map(exercise => exercise.id);
+        newRoutine.exercises = res;
+        return Routine.create(newRoutine);
+      })
+      .then(result => {
+        const {id} = result;
+        return Routine.findById(id).populate('exercises', 'name sets reps userId').populate('tags', 'name');
+      })
+      .then(result => {
+        res.location(`${req.originalUrl}/${result.id}`).status(201).json(result);
+      })
+      .catch(err => {
+        next(err);
+      });
+  } else {
+    return Routine.create(newRoutine)
+      .then(result => {
+        const {id} = result;
+        return Routine.findById(id).populate('exercises', 'name sets reps userId').populate('tags', 'name');
+      })
+      .then(result => {
+        res.location(`${req.originalUrl}/${result.id}`).status(201).json(result);
+      })
+      .catch(err => {
+        next(err);
+      });
+  }
 });
 
 Router.put('/:id', (req, res, next) => {
@@ -231,43 +247,104 @@ Router.put('/:id', (req, res, next) => {
     });
   }
 
-  const mappedEx = updateObj.exercises.map(exercise => {
-    return Object.assign({}, exercise, {
-      userId
+  if (updateObj.exercises.length > 0) {
+    const mappedEx = updateObj.exercises.map(exercise => {
+      return Object.assign({}, exercise, {
+        userId
+      });
     });
-  });
+  
+    updateObj.exercises = mappedEx;
 
-  updateObj.exercises = mappedEx;
+    Routine.findOne({userId, _id: id})
+      .then(result => {
+        const deleteIds = result.exercises;
+        return Exercise.deleteMany({userId, _id: {$in: deleteIds}});
+      })
+      .then(() => {
+        return Exercise.create(updateObj.exercises);
+      })
+      .then(result => {
+        const res = result.map(exercise => exercise.id);
+        updateObj.exercises = res;
+        return Routine.findOneAndUpdate({_id: id, userId}, {$set: updateObj}, {new: true});
+      })
+      .then(result => {
+        if (result) {
+          const {id} = result;
+          return Routine.findById(id).populate('exercises', 'name sets reps userId').populate('tags', 'name');
+        } else {
+          next();
+        }
+      })
+      .then(result => {
+        res.json(result);
+      })
+      .catch(err => {
+        next(err);
+      });
+  } else {
+    Routine.findOne({userId, _id: id})
+      .then(result => {
+        const deleteIds = result.exercises;
+        return Exercise.deleteMany({userId, _id: {$in: deleteIds}});
+      })
+      .then(() => {
+        return Routine.findOneAndUpdate({_id: id, userId}, {$set: updateObj}, {new: true});
+      })
+      .then(result => {
+        if (result) {
+          const {id} = result;
+          return Routine.findById(id).populate('exercises', 'name sets reps userId').populate('tags', 'name');
+        } else {
+          next();
+        }
+      })
+      .then(result => {
+        res.json(result);
+      })
+      .catch(err => {
+        next(err);
+      });
+  }
 
-  let deleteIds;
+  // const mappedEx = updateObj.exercises.map(exercise => {
+  //   return Object.assign({}, exercise, {
+  //     userId
+  //   });
+  // });
 
-  Routine.findOne({userId, _id: id})
-    .then(result => {
-      deleteIds = result.exercises;
-      return Exercise.deleteMany({userId, _id: {$in: deleteIds}});
-    })
-    .then(() => {
-      return Exercise.create(updateObj.exercises);
-    })
-    .then(result => {
-      const res = result.map(exercise => exercise.id);
-      updateObj.exercises = res;
-      return Routine.findOneAndUpdate({_id: id, userId}, {$set: updateObj}, {new: true});
-    })
-    .then(result => {
-      if (result) {
-        const {id} = result;
-        return Routine.findById(id).populate('exercises', 'name sets reps userId').populate('tags', 'name');
-      } else {
-        next();
-      }
-    })
-    .then(result => {
-      res.json(result);
-    })
-    .catch(err => {
-      next(err);
-    });
+  // updateObj.exercises = mappedEx;
+
+  // let deleteIds;
+
+  // Routine.findOne({userId, _id: id})
+  //   .then(result => {
+  //     deleteIds = result.exercises;
+  //     return Exercise.deleteMany({userId, _id: {$in: deleteIds}});
+  //   })
+  //   .then(() => {
+  //     return Exercise.create(updateObj.exercises);
+  //   })
+  //   .then(result => {
+  //     const res = result.map(exercise => exercise.id);
+  //     updateObj.exercises = res;
+  //     return Routine.findOneAndUpdate({_id: id, userId}, {$set: updateObj}, {new: true});
+  //   })
+  //   .then(result => {
+  //     if (result) {
+  //       const {id} = result;
+  //       return Routine.findById(id).populate('exercises', 'name sets reps userId').populate('tags', 'name');
+  //     } else {
+  //       next();
+  //     }
+  //   })
+  //   .then(result => {
+  //     res.json(result);
+  //   })
+  //   .catch(err => {
+  //     next(err);
+  //   });
 
   // if (updateObj.tags) {
   //   if (!Array.isArray(updateObj.tags)) {
