@@ -15,18 +15,18 @@ Router.use('/', passport.authenticate('jwt', { session: false, failWithError: tr
 //==========GET all routines=========
 Router.get('/', (req, res, next) => {
   let filter = {};
-  const { searchTerm } = req.query;
-  const { tagId } = req.query;
+  // const { searchTerm } = req.query;
+  // const { tagId } = req.query;
   const userId = req.user.id;
 
   filter = { userId };
   
-  if (searchTerm) {
-    filter.title = {$regex: searchTerm, $options: 'i'};
-  }
-  if (tagId) {
-    filter.tags = tagId;
-  }
+  // if (searchTerm) {
+  //   filter.title = {$regex: searchTerm, $options: 'i'};
+  // }
+  // if (tagId) {
+  //   filter.tags = tagId;
+  // }
 
   return Routine.find(filter)
     .sort({ updatedAt: 'desc'})
