@@ -45,24 +45,24 @@ Router.get('/', (req, res, next) => {
 });
 
 //============GET by ID=================
-Router.get('/:id', (req, res, next) => {
-  const { id } = req.params;
-  const userId = req.user.id;
+// Router.get('/:id', (req, res, next) => {
+//   const { id } = req.params;
+//   const userId = req.user.id;
 
-  return Routine.findOne({_id: id, userId})
-    .populate('exercises', 'name sets reps userId')
-    .populate('tags', 'name')
-    .then(routine => {
-      if (routine) {
-        res.json(routine);
-      } else {
-        next();
-      }
-    })
-    .catch(err => {
-      next(err);
-    });
-});
+//   return Routine.findOne({_id: id, userId})
+//     .populate('exercises', 'name sets reps userId')
+//     .populate('tags', 'name')
+//     .then(routine => {
+//       if (routine) {
+//         res.json(routine);
+//       } else {
+//         next();
+//       }
+//     })
+//     .catch(err => {
+//       next(err);
+//     });
+// });
 
 //=====POST/Create a new routine=====
 Router.post('/', (req, res, next) => {
