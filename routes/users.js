@@ -61,11 +61,24 @@ Router.post('/', (req, res, next) => {
     }
   }
 
+  let first;
+  let last;
+
+  if (firstName) {
+    first = firstName.trim();
+  } else {
+    first = username;
+  }
+
+  if (lastName) {
+    last = lastName.trim();
+  }
+
   return User.hashPassword(password)
     .then(digest => {
       const newUser = {
-        firstName: firstName.trim(),
-        lastName: lastName.trim(),
+        firstName: first,
+        lastName: last,
         username,
         password: digest
       };
